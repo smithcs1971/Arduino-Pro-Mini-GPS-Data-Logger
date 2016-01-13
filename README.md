@@ -7,6 +7,10 @@ In 2014 we developed and deployed a prototype wireless GPS datalogger (http://fr
 
 http://fritzing.org/media/fritzing-repo/projects/w/wireless-gps-datalogger/images/IMG_2445.JPG
 
+
+
+![alt tag](http://fritzing.org/media/fritzing-repo/projects/w/wireless-gps-datalogger/images/IMG_2445.JPG)
+
 The prototype data logger (http://fritzing.org/projects/wireless-gps-datalogger) proved to be moderatley succesfully, 
 
 http://fritzing.org/media/fritzing-repo/projects/w/wireless-gps-datalogger/images/IMG_2445.JPG
