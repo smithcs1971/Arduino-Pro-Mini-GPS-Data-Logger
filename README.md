@@ -13,7 +13,7 @@ See wiki for build instructions.
 
 ![slide1](https://cloud.githubusercontent.com/assets/16680738/12371287/9c0bcbc4-bc79-11e5-9c2a-b8c752efde74.jpg)
 
-Studying the movement of wildlife is essential for understanding their biology, role in the ecosystem and other important issues, including the ecology of any disease they may host. Over the decades many telemtry devices have been used to study the movement of wildlfe, inlcuding; radio, satellite and most recently GPS. However, this technology is often expensive and beyond the scope of students, citizen scientists and other interested parties.
+Studying the movement of wildlife is essential for understanding their biology, role in the ecosystem and other important issues, including the ecology of any disease they may host. Over the decades many telemetry devices have been used to study the movement of wildlfe, inlcuding; radio, satellite and most recently GPS. However, this technology is often expensive and beyond the scope of students, citizen scientists and other interested parties.
 
 In 2014 we developed and deployed a prototype wireless GPS datalogger (http://fritzing.org/projects/wireless-gps-datalogger) on flying-foxes (the worlds largest bats) and gained useful data.
 
