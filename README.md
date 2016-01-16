@@ -23,7 +23,7 @@ The prototype was glued to the back of the flying-fox using a medical grade skin
 
 ![alt tag](http://fritzing.org/media/fritzing-repo/projects/w/wireless-gps-datalogger/images/IMG_2514.JPG)
 
-The protype was succesful in capturing movement data of the flying-fox. It revieled that the bat left its roost at 17:59, travelled 30 km south to its foraging area. The next morning, the bat flew the return trip to the roost and arrived home at 5:34, just before sunrise. A total distance of over 60 km (almost 40 miles) in a single night.
+The protype was succesful in capturing movement data of the flying-fox. It revealed that the bat left its roost at 17:59, travelled 30 km south to its foraging area. The next morning, the bat flew the return trip to the roost and arrived home at 5:34, just before sunrise. A total distance of over 60 km (almost 40 miles) in a single night.
 
 ![alt tag](http://fritzing.org/media/fritzing-repo/projects/w/wireless-gps-datalogger/images/IMG_2446.JPG)
 
