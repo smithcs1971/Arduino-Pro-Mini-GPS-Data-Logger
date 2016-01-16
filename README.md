@@ -9,7 +9,7 @@ Build yourself a wireless GPS data logger for use on wildlife.
 
 -Build cost AUS$48 (US$33)
 
-See wiki for build instructions (https://github.com/smithcs1971/Arduino-Pro-Mini-Wireless-GPS-Data-Logger.wiki.git).
+See wiki for build instructions.
 
 ![slide1](https://cloud.githubusercontent.com/assets/16680738/12371287/9c0bcbc4-bc79-11e5-9c2a-b8c752efde74.jpg)
 
