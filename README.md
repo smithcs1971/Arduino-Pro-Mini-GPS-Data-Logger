@@ -1,7 +1,7 @@
 # Arduino-Pro-Mini-Wireless-GPS-Data-Logger
 Build yourself a wireless GPS data logger for use on wildlife.
 
-![alt tag](https://github.com/smithcs1971/Arduino-Pro-Mini-Wireless-GPS-Data-Logger/Slide1.jpg)
+![alt tag](https://github.com/smithcs1971/Arduino-Pro-Mini-Wireless-GPS-Data-Logger.wiki/images/Slide1.jpg)
 
 Studying the movement of wildlife is essential for understanding their biology, role in the ecosystem and other important issues, including the ecology of any disease they may host. Over the decades many telemtry devices have been used to study the movement of wildlfe, inlcuding; radio, satellite and most recently GPS. However, this technology is often expensive and beyond the scope of students, citizen scientists and other interested parties.
 
