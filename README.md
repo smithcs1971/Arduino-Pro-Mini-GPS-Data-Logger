@@ -1,6 +1,16 @@
 # Arduino-Pro-Mini-Wireless-GPS-Data-Logger
 Build yourself a wireless GPS data logger for use on wildlife.
 
+-Store up to 100 locations in EEPROM (3000 with Qduino)
+
+-Wireless range up to 500m with coil antenna (over 2km with whip antenna)
+
+-Download locations automatically to receiver or on command over wireless connection
+
+-Build cost AUS$48 (US$33)
+
+See wiki for build instructions (https://github.com/smithcs1971/Arduino-Pro-Mini-Wireless-GPS-Data-Logger.wiki.git).
+
 ![slide1](https://cloud.githubusercontent.com/assets/16680738/12371287/9c0bcbc4-bc79-11e5-9c2a-b8c752efde74.jpg)
 
 Studying the movement of wildlife is essential for understanding their biology, role in the ecosystem and other important issues, including the ecology of any disease they may host. Over the decades many telemtry devices have been used to study the movement of wildlfe, inlcuding; radio, satellite and most recently GPS. However, this technology is often expensive and beyond the scope of students, citizen scientists and other interested parties.
