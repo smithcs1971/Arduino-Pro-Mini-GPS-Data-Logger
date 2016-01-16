@@ -1,7 +1,7 @@
 # Arduino-Pro-Mini-Wireless-GPS-Data-Logger
 Build yourself a wireless GPS data logger for use on wildlife.
 
--Store up to 100 locations in EEPROM (3000 with Qduino)
+-Store up to 100 locations in EEPROM (3200 with SAMD21)
 
 -Wireless range up to 500m with coil antenna (over 2km with whip antenna)
 
