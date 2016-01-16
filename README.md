@@ -5,7 +5,7 @@ Build yourself a wireless GPS data logger for use on wildlife.
 
 -Wireless range up to 500m with coil antenna (over 2km with whip antenna)
 
--Download locations automatically to receiver or on command over wireless connection
+-Download locations automatically to receiver, on command over wireless connection or in real time (using the Unfolding mapping library for Processing and Java)
 
 -Build cost AUS$48 (US$33)
 
