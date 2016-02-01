@@ -1,0 +1,84 @@
+#include "Arduino.h"
+#include <EEPROMex.h>
+#include <SoftwareSerial.h>
+
+int delay_period = 100;
+
+SoftwareSerial radioSS(8, 9);
+
+void radioOFF();
+void radioON();
+void txEEPROM();
+
+void setup()
+{
+  txEEPROM();
+}
+
+void loop()
+{
+
+}
+     
+void radioOFF()
+{
+  delay(delay_period);
+  radioSS.end();
+  pinMode(9, INPUT_PULLUP);
+  digitalWrite(4, LOW);
+  digitalWrite(5, LOW);
+  digitalWrite(6, LOW);
+  digitalWrite(7, LOW);
+  pinMode(4, INPUT);
+  pinMode(5, INPUT);
+  pinMode(6, INPUT);
+  pinMode(7, INPUT);
+}
+
+void radioON()
+{
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+  digitalWrite(4, HIGH);
+  digitalWrite(5, HIGH);
+  digitalWrite(6, HIGH);
+  digitalWrite(7, HIGH);
+  pinMode(8, INPUT);
+  pinMode(9, OUTPUT);
+  radioSS.begin(9600);
+  delay(delay_period);
+}
+
+void txEEPROM()
+{
+  radioON();
+  int address = 10;
+  while(address <= 1000)
+  {
+    radioON();
+    radioSS.print(dataLogger);
+    radioSS.print(",");
+    radioSS.print(address / 10);
+    radioSS.print(",");
+    radioSS.print(EEPROM.read(address));
+    radioSS.print(":");
+    radioSS.print(EEPROM.read(address + 1));
+    radioSS.print(",");
+    radioSS.print(EEPROM.readFloat(address + 2), 4);
+    radioSS.print(",");
+    radioSS.println(EEPROM.readFloat(address + 6), 4);
+    delay(delay_period);
+    address = address + 10;
+    radioOFF();
+  }
+  radioON();
+  radioSS.println("");
+  delay(delay_period);
+  radioOFF();
+}
+
+
+
+
