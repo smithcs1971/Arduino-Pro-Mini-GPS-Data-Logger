@@ -1,0 +1,284 @@
+//160103
+//Delay loop() for 15 seconds to allow upload of txEEPROM to a recovered data logger
+//151201
+//hdop changed
+//150217
+//For loop changed so datalogger gets location every 15 minutes but transmits a heartbeat every 5 minutes.
+//150204
+//Listen after heartbeat and txEPPROM if commanded 'tx'
+//150131
+//For loop added so datalogger gets location every 60 minutes but transmits a heartbeat every 5 minutes.
+//150122
+//Code neatened
+//150121
+//Added void heartBeat() so datalogger gets location every 15 minutes but transmits a heartbeat every 5 minutes.
+
+byte month, day, hour, minute, second;
+
+#define dataLogger 5
+
+float flat, flon;
+
+#include "Arduino.h"
+#include <EEPROMex.h>
+#include <LowPower.h>
+#include <SoftwareSerial.h>
+#include <TinyGPS.h>
+
+int delay_period = 100;
+int year;
+
+SoftwareSerial gpsSS(10, 11);
+SoftwareSerial radioSS(8, 9);
+
+TinyGPS gps;
+
+unsigned long startTime;
+
+void gpsOFF();
+void gpsON();
+void heartBeat();
+void moveEEPROM();
+void radioOFF();
+void radioON();
+void sleep();
+void txEEPROM();
+
+void setup()
+{
+  //Delay for 15 seconds to allow upload of txEEPROM to a recovered data logger
+  delay(15000);
+  //Set the EEPROM size and maximum allowed writes for EEPRPMex
+  EEPROM.setMemPool(0, 1023);
+  EEPROM.setMaxAllowedWrites(32767);
+  //Write default values to the EEPROM to assist with debugging, i.e. 1:1,1.0000,1.0000
+  int address = 10;
+  while(address <= 1000)
+  {
+    EEPROM.write(address, address / 10);
+    EEPROM.write(address + 1, address / 10);
+    EEPROM.writeFloat(address + 2, address / 10.0000);
+    EEPROM.writeFloat(address + 6, address / 10.0000);
+    address += 10;
+  }
+  startTime = millis();
+  //Serial.begin(9600);
+}
+
+void loop()
+{
+  gpsON();
+  //Give the GPS 90 secinds to acquire a location
+  while(millis() - startTime < 90000)
+  {
+    //Do this while there is GPS data in the buffer
+    while(gpsSS.available())
+    {
+      //Read the GPS data
+      int c = gpsSS.read();
+      //Do this if the GPS data is valid and the HDOP is less than 1.95 SE
+      if(gps.encode(c)) // && gps.hdop() < 150)
+      {
+        gpsOFF();
+        //Get location
+        gps.f_get_position(&flat, &flon);
+        //Get time
+        gps.crack_datetime(&year, &month, &day, &hour, &minute, &second);
+        //Add 10 hours for Australian eastern time
+        hour = hour + 10;
+        if (hour > 23)
+        {
+        hour -= 24;
+        }
+        //Move EEPROM data down the list
+        moveEEPROM();
+        //Write the time and the location to the EEPROM
+        EEPROM.write(10, hour);
+        EEPROM.write(11, minute);
+        EEPROM.writeFloat(12, flat);
+        EEPROM.writeFloat(16, flon);
+        //Transmit EEPROM if needed and sleep for 5 minutes, repeat x times.
+        if(hour > 5 && hour < 7)
+        {
+          txEEPROM();
+        }
+        for(int x = 0; x < 3; x++)
+        {
+          heartBeat();
+          sleep();
+        }
+        startTime = millis();
+        gpsON();
+      }
+    }
+  }
+  //Do this when the GPS did not acquire a location
+  gpsOFF();
+  //Move EEPROM data down the list
+  moveEEPROM();
+  //Write zeros to time and location to indicate NO_GPS
+  EEPROM.write(10, 0);
+  EEPROM.write(11, 0);
+  EEPROM.writeFloat(12, 0.0000);
+  EEPROM.writeFloat(16, 0.0000);
+  //Send the heartbeat with a time of 0:0 to indicate NO_GPS but include last known location
+  hour = 0;
+  minute = 0;
+  for(int x = 0; x < 3; x++)
+  {
+    heartBeat();
+    sleep();
+  }
+  startTime = millis();
+  gpsON();
+}
+
+void gpsOFF()
+{
+  gpsSS.end();
+  pinMode(11, INPUT);
+  digitalWrite(A0, LOW);
+  digitalWrite(A1, LOW);
+  digitalWrite(A2, LOW);
+  digitalWrite(A3, LOW);
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT);
+  pinMode(A3, INPUT);
+}
+
+void gpsON()
+{
+  pinMode(A0, OUTPUT);
+  pinMode(A1, OUTPUT);
+  pinMode(A2, OUTPUT);
+  pinMode(A3, OUTPUT);
+  digitalWrite(A0, HIGH);
+  digitalWrite(A1, HIGH);
+  digitalWrite(A2, HIGH);
+  digitalWrite(A3, HIGH);
+  pinMode(10, INPUT);
+  pinMode(11, OUTPUT);
+  gpsSS.begin(9600);
+}
+
+void heartBeat()
+{
+  radioON();
+  radioSS.print(dataLogger);
+  radioSS.print(",");
+  radioSS.print(hour, DEC);
+  radioSS.print(",");
+  radioSS.print(minute, DEC);
+  radioSS.print(",");  
+  radioSS.print(flat, 4);
+  radioSS.print(",");
+  radioSS.println(flon, 4);
+  //radioSS.println();
+  delay(delay_period);
+  
+  startTime = millis();
+  //Let the radio listen for 15 seconds for command to txEPPROM
+  while(millis() - startTime < 15000)
+  {
+    //If there is data in the radioSS buffer, do this
+    while(radioSS.available())
+    {
+      //Read incoming radio data
+      String s = radioSS.readString();
+      radioSS.println();
+      //If incoming radio data is 'tx' then txEPPROM
+      if(s == "tx")
+      {
+        radioOFF();
+        txEEPROM();
+      }
+    }
+  }
+  radioOFF();
+}
+
+void moveEEPROM()
+{
+  int address = 990;
+  while(address > 0)
+  {
+    EEPROM.write(address + 10, EEPROM.read(address));
+    EEPROM.write(address + 11, EEPROM.read(address + 1));
+    EEPROM.writeFloat(address + 12, EEPROM.readFloat(address + 2));
+    EEPROM.writeFloat(address + 16, EEPROM.readFloat(address + 6));
+    address -= 10;
+  }
+}
+
+void radioOFF()
+{
+  delay(delay_period);
+  radioSS.end();
+  pinMode(9, INPUT_PULLUP);
+  digitalWrite(4, LOW);
+  digitalWrite(5, LOW);
+  digitalWrite(6, LOW);
+  digitalWrite(7, LOW);
+  pinMode(4, INPUT);
+  pinMode(5, INPUT);
+  pinMode(6, INPUT);
+  pinMode(7, INPUT);
+}
+
+void radioON()
+{
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+  digitalWrite(4, HIGH);
+  digitalWrite(5, HIGH);
+  digitalWrite(6, HIGH);
+  digitalWrite(7, HIGH);
+  pinMode(8, INPUT);
+  pinMode(9, OUTPUT);
+  radioSS.begin(9600);
+  delay(delay_period);
+}
+
+void sleep()
+{
+  int sleep = 0;
+  while(sleep < 35)
+  {
+    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+    sleep++;
+  }
+}
+
+void txEEPROM()
+{
+  radioON();
+  int address = 10;
+  while(address <= 1000)
+  {
+    radioON();
+    radioSS.print(dataLogger);
+    radioSS.print(",");
+    radioSS.print(address / 10);
+    radioSS.print(",");
+    radioSS.print(EEPROM.read(address));
+    radioSS.print(":");
+    radioSS.print(EEPROM.read(address + 1));
+    radioSS.print(",");
+    radioSS.print(EEPROM.readFloat(address + 2), 4);
+    radioSS.print(",");
+    radioSS.println(EEPROM.readFloat(address + 6), 4);
+    delay(delay_period);
+    address = address + 10;
+    radioOFF();
+  }
+  radioON();
+  radioSS.println("");
+  delay(delay_period);
+  radioOFF();
+}
+
+
+
